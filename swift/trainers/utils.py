@@ -187,6 +187,9 @@ def dynamic_gradient_checkpointing(model, including_vit: bool = False) -> None:
             model_tower = model
         else:
             model_tower = deep_getattr(model, tower_name)
+        if model_tower is None:
+            logger.warn('skip cause not a video_tower which do not have attribute: supports_gradient_checkpointing')
+            continue
         model_tower.supports_gradient_checkpointing = True
         module_list = find_module_list(model_tower)
         if module_list is None:
