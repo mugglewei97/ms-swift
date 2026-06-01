@@ -7,6 +7,7 @@ from swift.arguments import SftArguments
 from swift.dataset import (AddLengthPreprocessor, DatasetLoader, EncodePreprocessor, IterablePackingDataset,
                            LazyLLMDataset, PackingDataset, load_dataset)
 from swift.infer_engine import prepare_generation_config
+from swift.expert_parallel import expert_parallel
 from swift.ray import RayHelper
 from swift.sequence_parallel import sequence_parallel
 from swift.trainers import TrainerFactory
@@ -52,6 +53,8 @@ class SwiftSft(SwiftPipeline, TunerMixin):
         if args.sequence_parallel_size > 1:
             sequence_parallel.prepare(
                 args.sequence_parallel_size, model=self.model, tokenizer=self.processor, padding_free=args.padding_free)
+        if getattr(args, 'expert_parallel', False) and self.model is not None:
+            expert_parallel.prepare(args.global_world_size, model=self.model)
         if self.model is None:
             return
         if hasattr(self.model, 'hf_device_map'):

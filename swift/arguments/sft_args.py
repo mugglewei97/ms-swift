@@ -181,6 +181,9 @@ class SftArguments(SwanlabArguments, TunerArguments, BaseArguments, Seq2SeqTrain
     # fsdp
     fsdp: Optional[str] = None
 
+    # expert parallel (MoE)
+    expert_parallel: bool = False
+
     def _check_padding_free(self):
         if self.padding_free or self.packing:
             if self.packing:
@@ -291,6 +294,7 @@ class SftArguments(SwanlabArguments, TunerArguments, BaseArguments, Seq2SeqTrain
         # FSDP2 preset configurations
         fsdp_mapping = {
             'fsdp2': 'fsdp2.json',
+            'fsdp2_deepseek_v4': 'fsdp2_deepseek_v4.json',
         }
 
         fsdp_config_path = self.fsdp
